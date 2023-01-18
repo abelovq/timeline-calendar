@@ -46,7 +46,6 @@ export const TimelineCalendar = ({
   const firstRender = useRef(true);
   const eventsRef = useRef<null | HTMLDivElement>(null);
   const bodyRef = useRef<HTMLDivElement | null>(null);
-  const coeffRef = useRef<number>();
 
   const [weekStartDate, setWeekStartDate] = useState<Date>(() => {
     const today = new Date();
@@ -77,7 +76,6 @@ export const TimelineCalendar = ({
     if (!firstRender.current) {
       // if we sync state need to filter from existed events whick already in dataEvents (defaultEvents)
       const newEvents = filterNewEvents(defaultEvents, dataEvents);
-      console.log('newEvents', newEvents);
       const newEventsMap = transformToMap(newEvents, maxKey);
 
       const newDataWithEventOrigin = mapDefaultEventToEventOrigin(
@@ -102,7 +100,8 @@ export const TimelineCalendar = ({
 
   useEffect(() => {
     const node = eventsRef.current;
-    if (!node) return;
+    const body = bodyRef.current;
+    if (!node || !body) return;
 
     const resources = node.previousElementSibling?.getBoundingClientRect();
 
@@ -110,14 +109,16 @@ export const TimelineCalendar = ({
 
     const onMouseMove = debounce((e: MouseEvent) => {
       // TODO make getTimeByCoords with intervalBy e.g. 15 by default, 30 etc
-      const posX = e.clientX - resources!.width;
+      const posX =
+        e.clientX - body.getBoundingClientRect().left - resources!.width;
 
       if (!node.contains(e.target as Node)) {
         setTimeIndicator(init);
         return;
       }
+
       const coefficient = Math.floor(posX / 1344);
-      coeffRef.current = coefficient;
+
       const coords = fn(coefficient);
 
       const [, value] = getTimeByCoords(posX, coefficient, weekStartDate);
@@ -131,7 +132,7 @@ export const TimelineCalendar = ({
     return () => {
       document.removeEventListener('mousemove', onMouseMove);
     };
-  }, [init]);
+  }, [init, weekStartDate]);
 
   const goToWeek = (dir: 1 | -1) => {
     if (dir === -1) {
