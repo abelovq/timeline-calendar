@@ -1,0 +1,15 @@
+.timeline-interval {
+  width: 56px;
+  padding: 6px;
+  border-right: 1px solid #eee;
+  
+  span:nth-child(2), span:nth-child(3) {
+    opacity: 0;
+    position: relative;
+    left: -10px;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}

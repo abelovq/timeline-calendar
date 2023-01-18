@@ -1,34 +1,101 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+import { useCallback, useState } from 'react';
+
+import { TimelineCalendar } from './TimelineCalendar';
+
+import './App.css';
+
+const myEvents = [
+  {
+    title: 'Fixed event',
+    start: '2023-01-19T16:00',
+    end: '2023-01-19T18:30',
+    color: '#9e9e9e',
+    editable: false,
+    resource: 1,
+  },
+  {
+    title: 'Fixed event 2',
+    start: '2023-01-13T16:30',
+    end: '2023-01-13T19:45',
+    color: '#9e9e9e',
+    editable: false,
+    resource: 4,
+  },
+];
+
+const myResources = [
+  {
+    id: 1,
+    name: 'Resource A',
+    color: '#fdf500',
+  },
+  {
+    id: 2,
+    name: 'Resource B',
+    color: '#ff0101',
+  },
+  {
+    id: 3,
+    name: 'Resource C',
+    color: '#01adff',
+  },
+  {
+    id: 4,
+    name: 'Resource D',
+    color: '#239a21',
+  },
+  {
+    id: 5,
+    name: 'Resource E',
+    color: '#ff4600',
+  },
+];
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [events, setEvents] = useState(myEvents);
+
+  const add = () => {
+    setEvents((ev) => [
+      ...ev,
+      {
+        title: 'Fixed event 3',
+        start: '2023-01-20T08:00',
+        end: '2023-01-20T12:00',
+        color: '#9e9e9e',
+        editable: false,
+        resource: 4,
+      },
+    ]);
+  };
+
+  const onDeleteEvent = useCallback(
+    (event: any) => console.log('delete event', event),
+    []
+  );
+
+  const onEventClick = useCallback(
+    (event: any) => console.log('click event', event),
+    []
+  );
+
+  const onAddEvent = useCallback(
+    (event: any) => console.log('add event', event),
+    []
+  );
 
   return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </div>
-  )
+    <main className="main">
+      <button onClick={add}>ADD EVENT</button>
+      <TimelineCalendar
+        className="timeline-calendar"
+        onAddEvent={onAddEvent}
+        onDeleteEvent={onDeleteEvent}
+        onEventClick={onEventClick}
+        defaultEvents={events}
+        resources={myResources}
+      />
+    </main>
+  );
 }
 
-export default App
+export default App;

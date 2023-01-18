@@ -1,0 +1,25 @@
+.timeline-block {
+  display: flex;
+  position: relative;
+  &__scroll {
+    display: flex;
+    flex: 1 0 auto;
+    position: relative;
+    border-bottom: 1px solid #eee;
+  }
+  &__indicator {
+    width: 100%;
+    position: absolute;
+    top: 100%;
+    pointer-events: none;
+    .time-indicator {
+      top: -17px;
+      z-index: 2;
+      position: absolute;
+      background: hsl(0,0%,100%);
+      padding: 0 5px;
+      color: #007aff;
+      font-size: 10px;
+    }
+  }
+}

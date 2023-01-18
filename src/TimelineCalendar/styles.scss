@@ -1,0 +1,101 @@
+body {
+  font-family: sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+
+html, body, #app {
+  height: 100%;
+}
+
+.wrapper {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  overflow-x: scroll;
+
+  .timeline-block {
+    display: flex;
+    position: relative;
+    &__scroll {
+      display: flex;
+      flex: 1 0 auto;
+      position: relative;
+      border-bottom: 1px solid #eee;
+    }
+    &__indicator {
+      width: 100%;
+      position: absolute;
+      top: 100%;
+      pointer-events: none;
+      .time-indicator {
+        top: -17px;
+        z-index: 2;
+        position: absolute;
+        background: hsl(0,0%,100%);
+        padding: 0 5px;
+        color: #007aff;
+        font-size: 10px;
+      }
+    }
+  }
+
+  .timeline-cell--empty {
+    flex: 1 0 200px;
+    background-color: #fff;
+    overflow: hidden;
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    border-bottom: 1px solid #eee;
+    border-right: 1px solid #eee;
+  
+  }
+
+  .timeline-cell {
+    min-width: 100px;
+    padding: 10px;
+  }
+  
+  .timeline-period {
+    position: relative;
+    &::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      display: block;
+      height: 100%;
+      width: 1px;
+      background-color: red;
+    }
+  }
+
+  .timeline-time-interval {
+    display: flex;
+    
+    font-size: 10px;
+    border-top: 1px solid #eee;
+  }
+}
+
+.body {
+  flex: 1 0 auto;
+  display: flex;
+  justify-content: space-between;
+
+  &-days {
+    height: 30px;
+    display: flex;
+    justify-content: space-between;
+    flex-basis: 50px;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+  }
+}

@@ -1,0 +1,22 @@
+.resources {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  justify-content: space-evenly;
+  min-width: 200px;
+  border-right: 1px solid #eee;
+  position: sticky;
+  left: 0;
+  z-index: 3;
+  background-color: #fff;
+  & :first-child {
+    border-bottom: 1px solid #eee;
+  }
+  .resource {
+    padding: 10px;
+    flex: 1 1 auto;
+    border-bottom: 1px solid #eee;
+  }
+}
+
+
