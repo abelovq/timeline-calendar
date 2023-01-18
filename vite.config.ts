@@ -10,4 +10,5 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: './tests/setup.js',
   },
+  base: '/timeline-calendar/',
 });
