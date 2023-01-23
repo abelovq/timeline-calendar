@@ -34,6 +34,8 @@ interface ITimelineCalendarProps {
   onEventClick?: (data: any) => void;
 }
 
+const init = { visible: 'hidden', left: 0, value: '' };
+
 export const TimelineCalendar = ({
   defaultEvents = [],
   resources,
@@ -64,8 +66,6 @@ export const TimelineCalendar = ({
     );
     return newDataWithEventOrigin;
   });
-
-  const init = { visible: 'hidden', left: 0, value: '' };
 
   const [timeIndicator, setTimeIndicator] = useState(init);
   const [activeEventId, setActiveEventId] = useState<number | null>(null);
@@ -132,7 +132,7 @@ export const TimelineCalendar = ({
     return () => {
       document.removeEventListener('mousemove', onMouseMove);
     };
-  }, [init, weekStartDate]);
+  }, [weekStartDate]);
 
   const goToWeek = (dir: 1 | -1) => {
     if (dir === -1) {
