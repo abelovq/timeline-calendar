@@ -1,4 +1,10 @@
-import { useState, useRef, useCallback, useMemo, useEffect } from 'react';
+import React, {
+  useState,
+  useRef,
+  useCallback,
+  useMemo,
+  useEffect,
+} from 'react';
 import classNames from 'classnames';
 import debounce from 'lodash/debounce';
 
@@ -48,6 +54,18 @@ export const TimelineCalendar = ({
   const firstRender = useRef(true);
   const eventsRef = useRef<null | HTMLDivElement>(null);
   const bodyRef = useRef<HTMLDivElement | null>(null);
+  const timelineScrollBlock = useRef<HTMLDivElement | null>(null);
+  const timelineCalendar = useRef<HTMLDivElement | null>(null);
+
+  const [intersectedId, setIntersectedId] = useState(() =>
+    new Date().getDate()
+  );
+
+  const scrollPosRef = useRef(0);
+  const [scrollDir, setScrollDir] = useState('right');
+  const topLeftStickyBlockRef = useRef<HTMLDivElement | null>(null);
+
+  const timelinePeriodRef = useRef<{ [id: string]: HTMLDivElement }>({});
 
   const [weekStartDate, setWeekStartDate] = useState<Date>(() => {
     const today = new Date();
@@ -186,26 +204,126 @@ export const TimelineCalendar = ({
     };
   }, [setEvent, setDeleteEvent, clickEvent, activeEventId]);
 
+  const onScrollTimeline = (e: React.WheelEvent<HTMLDivElement>) => {
+    const prevX = (e.target as HTMLDivElement).scrollLeft;
+    const topLeftStickyBlock = topLeftStickyBlockRef.current;
+    if (!topLeftStickyBlock) return;
+
+    const topLeftStickyBlockWidth =
+      topLeftStickyBlock.getBoundingClientRect().width;
+
+    if (prevX < scrollPosRef.current) {
+      setScrollDir('left');
+    }
+    if (prevX > scrollPosRef.current) {
+      setScrollDir('right');
+    }
+    scrollPosRef.current = prevX;
+
+    if (scrollDir === 'right') {
+      const element = timelinePeriodRef.current[intersectedId];
+      const elementNext = timelinePeriodRef.current[intersectedId + 1];
+
+      const dateEl = element.querySelector('.timeline-cell') as HTMLDivElement;
+      let { width: dateElWidth } = dateEl.getBoundingClientRect();
+      let { left: nextElLeft = 0 } = elementNext?.getBoundingClientRect() ?? {};
+
+      if (nextElLeft) {
+        if (nextElLeft <= topLeftStickyBlockWidth + dateElWidth) {
+          dateEl.style.left = `${nextElLeft - dateElWidth}px`;
+        }
+        if (nextElLeft <= topLeftStickyBlockWidth) {
+          setIntersectedId((prev) => prev + 1);
+        }
+      }
+    } else if (scrollDir === 'left') {
+      const element = timelinePeriodRef.current[intersectedId];
+      const elementPrev = timelinePeriodRef.current[intersectedId - 1];
+      const elementNext = timelinePeriodRef.current[intersectedId + 1];
+
+      const { left } = element.getBoundingClientRect();
+      const { left: nextElLeft = 0 } =
+        elementNext?.getBoundingClientRect() ?? {};
+
+      if (elementPrev) {
+        if (nextElLeft) {
+          const dateElPrev =
+            elementPrev.querySelector<HTMLDivElement>('.timeline-cell');
+          const dateEl =
+            element.querySelector<HTMLDivElement>('.timeline-cell');
+
+          const { width } = dateElPrev!.getBoundingClientRect();
+
+          dateEl!.style.left = `${nextElLeft - width}px`;
+          if (nextElLeft - width >= topLeftStickyBlockWidth) {
+            dateEl!.style.left = `${topLeftStickyBlockWidth}px`;
+          }
+        }
+
+        if (left >= topLeftStickyBlockWidth) {
+          setIntersectedId((prev) => prev - 1);
+        }
+      } else if (element) {
+        if (left < topLeftStickyBlockWidth) {
+          const dateEl =
+            element.querySelector<HTMLDivElement>('.timeline-cell');
+          const { width } = dateEl!.getBoundingClientRect();
+          dateEl!.style.left = `${nextElLeft - width}px`;
+          if (nextElLeft - width >= topLeftStickyBlockWidth) {
+            dateEl!.style.left = `${topLeftStickyBlockWidth}px`;
+          }
+        }
+      }
+    }
+  };
+
   return (
     <TimelineCompProvider value={providerState}>
-      <div className={classNames('wrapper', className)}>
+      <div
+        onScroll={onScrollTimeline}
+        ref={timelineCalendar}
+        className={classNames('wrapper', className)}
+      >
         <div className="header timeline-block">
-          <div className="timeline-cell--empty">
+          <div ref={topLeftStickyBlockRef} className="timeline-cell--empty">
             <button onClick={() => goToWeek(-1)}>PREV WEEK</button>
             <button onClick={() => goToWeek(1)}>NEXT WEEK</button>
           </div>
 
-          <div className="timeline-block__scroll">
+          <div ref={timelineScrollBlock} className="timeline-block__scroll">
             <TimelineIndicator
               value={timeIndicator.value}
               pos={timeIndicator.left}
             />
             <div style={{ display: 'flex' }}>
               {weekRange.map((day) => {
+                const id = +(day as string).match(/\d+/)!;
+                const idStr = `timeline-period-${
+                  (day as string).split(' ')[0]
+                }`;
                 return (
-                  <div className="timeline-period" key={day}>
-                    <div className="timeline-cell">{day}</div>
-                    <div className="timeline-time-interval">
+                  <div
+                    ref={(el: HTMLDivElement) =>
+                      (timelinePeriodRef.current[id] = el)
+                    }
+                    className="timeline-period"
+                    key={day}
+                    id={idStr}
+                  >
+                    <div
+                      className="timeline-cell"
+                      style={{
+                        position: intersectedId === id ? 'fixed' : 'static',
+
+                        left: 200,
+                      }}
+                    >
+                      {day}
+                    </div>
+                    <div
+                      style={{ marginTop: intersectedId === id ? 38 : 0 }}
+                      className="timeline-time-interval"
+                    >
                       {intervals.map((interval, i) => (
                         <TimelineInterval key={i} interval={interval} />
                       ))}

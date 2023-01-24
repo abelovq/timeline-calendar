@@ -18,10 +18,15 @@ export const getCurrentWeekDays = (date: Date) => {
   const currMonth = new Date(date).getMonth();
 
   return range(currDate, currDate + 7, (i) => {
-    const [weekDay, number] = new Date(currYear, currMonth, i)
-      .toLocaleDateString('en-GB', { day: 'numeric', weekday: 'short' })
+    const [weekDay, number, month, year] = new Date(currYear, currMonth, i)
+      .toLocaleDateString('en-GB', {
+        day: 'numeric',
+        weekday: 'short',
+        year: 'numeric',
+        month: 'short',
+      })
       .split(' ');
-    return `${number} ${weekDay}`;
+    return `${number} ${weekDay} ${month} ${year}`.replace(/,/g, '');
   });
 };
 

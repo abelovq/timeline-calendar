@@ -85,7 +85,6 @@ function App() {
 
   return (
     <main className="main">
-      <button onClick={add}>ADD EVENT</button>
       <TimelineCalendar
         className="timeline-calendar"
         onAddEvent={onAddEvent}

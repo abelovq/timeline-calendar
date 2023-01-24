@@ -56,30 +56,31 @@ html, body, #app {
     z-index: 2;
     border-bottom: 1px solid #eee;
     border-right: 1px solid #eee;
-  
   }
 
   .timeline-cell {
-    min-width: 100px;
+    position: fixed;
+    width: max-content;
     padding: 10px;
   }
   
   .timeline-period {
     position: relative;
     &::after {
-      content: '';
+      content: "";
       position: absolute;
-      right: 0;
+      width: 2px;
+      right: -1px;
+      top: 0;
       display: block;
-      height: 100%;
-      width: 1px;
-      background-color: red;
+      height: calc(100vh - 17px);
+      background-color: #ccc;
+      z-index: 1;
     }
   }
 
   .timeline-time-interval {
     display: flex;
-    
     font-size: 10px;
     border-top: 1px solid #eee;
   }
