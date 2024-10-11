@@ -8,8 +8,9 @@ body {
   padding: 0;
 }
 
-
-html, body, #app {
+html,
+body,
+#app {
   height: 100%;
 }
 
@@ -36,10 +37,10 @@ html, body, #app {
       top: 100%;
       pointer-events: none;
       .time-indicator {
-        top: -17px;
+        top: -18px;
         z-index: 2;
         position: absolute;
-        background: hsl(0,0%,100%);
+        background: hsl(0, 0%, 100%);
         padding: 0 5px;
         color: #007aff;
         font-size: 10px;
@@ -53,7 +54,7 @@ html, body, #app {
     overflow: hidden;
     position: sticky;
     left: 0;
-    z-index: 2;
+    z-index: 3;
     border-bottom: 1px solid #eee;
     border-right: 1px solid #eee;
   }
@@ -63,11 +64,11 @@ html, body, #app {
     width: max-content;
     padding: 10px;
   }
-  
+
   .timeline-period {
     position: relative;
     &::after {
-      content: "";
+      content: '';
       position: absolute;
       width: 2px;
       right: -1px;

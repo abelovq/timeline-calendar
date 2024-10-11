@@ -156,11 +156,16 @@ export const TimelineCalendar = ({
     if (dir === -1) {
       const newWeek = minusWeek(weekStartDate);
       setWeekStartDate(newWeek);
+      timelinePeriodRef.current = {};
+      setIntersectedId(newWeek.getDate());
       return;
     }
 
     const newWeek = plusWeek(weekStartDate);
+    console.log(newWeek);
     setWeekStartDate(newWeek);
+    timelinePeriodRef.current = {};
+    setIntersectedId(newWeek.getDate());
   };
 
   const setEvent = useCallback(
@@ -207,6 +212,7 @@ export const TimelineCalendar = ({
   const onScrollTimeline = (e: React.WheelEvent<HTMLDivElement>) => {
     const prevX = (e.target as HTMLDivElement).scrollLeft;
     const topLeftStickyBlock = topLeftStickyBlockRef.current;
+
     if (!topLeftStickyBlock) return;
 
     const topLeftStickyBlockWidth =
